@@ -1,0 +1,243 @@
+# CRED-SHADOW Universal Installation & Usage Guide
+
+## Quick Start (Any Platform)
+
+### Universal Installation
+```bash
+# 1. Download CRED-SHADOW
+git clone <repository-url>
+cd CRED-SHADOW
+
+# 2. Run universal installer (auto-detects platform)
+sudo apt install samba-client cifs-utils
+python3 install_universal.py
+
+# 3. Use the tool
+./cred-shadow.sh --target 192.168.1.3 --username albert --password bradley1
+```
+
+## Platform-Specific Installation
+
+### Red Hat Enterprise Linux / Oracle Linux / CentOS
+```bash
+# Install system dependencies
+sudo yum install -y python3-pip python3-venv gcc python3-devel libffi-devel openssl-devel
+
+# Run installer
+python3 install_universal.py
+
+# Launch tool
+./cred-shadow.sh --target 192.168.1.3 --username albert --password bradley1
+```
+
+### Ubuntu / Debian
+```bash
+# Install system dependencies
+sudo apt update
+sudo apt install -y python3-pip python3-venv build-essential python3-dev libffi-dev libssl-dev
+
+# Run installer
+python3 install_universal.py
+
+# Launch tool
+./cred-shadow.sh --target 192.168.1.3 --username albert --password bradley1
+```
+
+### Fedora
+```bash
+# Install system dependencies
+sudo dnf install -y python3-pip python3-venv gcc python3-devel libffi-devel openssl-devel
+
+# Run installer
+python3 install_universal.py
+
+# Launch tool
+./cred-shadow.sh --target 192.168.1.3 --username albert --password bradley1
+```
+
+### macOS (Intel & Apple Silicon)
+```bash
+# Optional: Install Homebrew dependencies
+brew install python@3.11
+
+# Run installer
+python3 install_universal.py
+
+# Launch tool
+./cred-shadow.sh --target 192.168.1.3 --username albert --password bradley1
+```
+
+### Windows 10/11
+```cmd
+REM Ensure Python 3.11+ is installed and in PATH
+python install_universal.py
+
+REM Launch tool
+cred-shadow.bat --target 192.168.1.3 --username albert --password bradley1
+```
+
+## Usage Examples
+
+### Authentication Methods
+```bash
+# Username/password authentication
+./cred-shadow.sh --target 192.168.1.3 --username albert --password bradley1
+
+# Anonymous session
+./cred-shadow.sh --target 192.168.1.3 --anonymous
+
+# Null session
+./cred-shadow.sh --target 192.168.1.3 --null-session
+
+# Guest account
+./cred-shadow.sh --target 192.168.1.3 --guest
+
+# Try all methods automatically
+./cred-shadow.sh --target 192.168.1.3 --try-all
+
+# NTLM hash authentication
+./cred-shadow.sh --target 192.168.1.3 --username admin --hash LM:NT
+```
+
+### Scanning Modes
+```bash
+# Automatic scanning (default)
+./cred-shadow.sh --target 192.168.1.3 --username albert --password bradley1
+
+# Manual exploration mode
+./cred-shadow.sh --target 192.168.1.3 --username albert --password bradley1 --manual
+
+# Interactive mode
+./cred-shadow.sh --target 192.168.1.3 --username albert --password bradley1 --interactive
+
+# Verbose debugging
+./cred-shadow.sh --target 192.168.1.3 --username albert --password bradley1 --verbose
+```
+
+### Advanced Features
+```bash
+# Brute force attack
+echo -e "admin\nuser\nalbert" > users.txt
+echo -e "password\n123456\nbradley1" > passwords.txt
+./cred-shadow.sh --target 192.168.1.3 --userlist users.txt --passlist passwords.txt --bruteforce
+
+# Network scanning (CIDR)
+./cred-shadow.sh --target 192.168.1.0/24 --cidr --username admin --password pass123
+
+# Export results
+./cred-shadow.sh --target 192.168.1.3 --username albert --password bradley1 --output results.json --csv results.csv
+
+# Permission analysis
+./cred-shadow.sh --target 192.168.1.3 --username albert --password bradley1 --analyze-permissions
+
+# With delay for stealth
+./cred-shadow.sh --target 192.168.1.3 --userlist users.txt --passlist passwords.txt --bruteforce --delay 2
+```
+
+## Manual Installation (Alternative)
+```bash
+# Create virtual environment
+python3 -m venv cred_shadow_env
+
+# Activate environment
+source cred_shadow_env/bin/activate    # Linux/macOS
+# OR
+cred_shadow_env\Scripts\activate.bat   # Windows
+
+# Install dependencies
+pip install -r local_requirements.txt
+
+# Run tool directly
+python main.py --target 192.168.1.3 --username albert --password bradley1
+```
+
+## Manual Mode Commands
+```bash
+# After entering manual mode, use these commands:
+ls [path]          # List directory contents
+cd <path>          # Change directory
+cat <file>         # Display file contents
+download <file>    # Download file
+shares             # Show available shares
+help               # Show all commands
+exit               # Exit manual mode
+```
+
+## Troubleshooting
+
+### Connection Issues
+```bash
+# Test SMB connectivity first
+smbclient -L 192.168.1.3 -U albert%bradley1
+
+# Check network access
+nc -zv 192.168.1.3 445
+
+# Test with different authentication
+./cred-shadow.sh --target 192.168.1.3 --try-all --verbose
+```
+
+### Share Enumeration Problems
+```bash
+# Enable verbose debugging
+./cred-shadow.sh --target 192.168.1.3 --username albert --password bradley1 --verbose
+
+# Try different session types
+./cred-shadow.sh --target 192.168.1.3 --try-all
+```
+
+### Platform-Specific Issues
+
+#### Red Hat/CentOS/Oracle Linux
+```bash
+# Enable EPEL repository
+sudo yum install epel-release
+
+# Install development tools
+sudo yum groupinstall "Development Tools"
+
+# Fix SELinux if needed
+sudo setenforce 0  # Temporarily for testing
+```
+
+#### Ubuntu/Debian
+```bash
+# Fix broken packages
+sudo apt --fix-broken install
+
+# Update system
+sudo apt update && sudo apt upgrade
+```
+
+#### macOS
+```bash
+# Install Xcode Command Line Tools
+xcode-select --install
+
+# Fix Python path
+echo 'export PATH="/usr/local/opt/python@3.11/bin:$PATH"' >> ~/.zshrc
+```
+
+#### Windows
+```cmd
+REM Ensure Python is in PATH
+REM Install Visual C++ Build Tools if compilation fails
+REM Run Command Prompt as Administrator if permission issues
+```
+
+## Requirements
+- Python 3.11 or higher
+- Network access to SMB targets (port 445)
+- Supported platforms: Linux (all distributions), macOS, Windows
+- For compilation: build tools (gcc/clang/MSVC)
+
+## Security Notice
+**WARNING: For authorized testing only!**
+- Use only on systems you own or have explicit written permission to test
+- Comply with all local laws and organizational policies
+- Document all testing activities
+- Use in isolated lab environments when possible
+
+## Support
+For detailed platform compatibility information, see `PLATFORM_COMPATIBILITY.md`
+For comprehensive documentation, see `README.md` and `LOCAL_DEPLOYMENT.md`
