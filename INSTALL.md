@@ -3,6 +3,7 @@
 ## Universal Installation (Recommended)
 
 CRED-SHADOW works on any system with Python 3.11+. No special dependencies or platform-specific requirements.
+##sudo apt install samba-client cifs-utils
 
 ### Quick Start
 
